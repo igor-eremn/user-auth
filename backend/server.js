@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
-const PORT = process.env.PORT || 3000;
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
 const userRoutes = require('./routes');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -18,8 +19,17 @@ const client = new MongoClient(uri, {
   },
 });
 
-app.use('/user-auth', userRoutes(client));
+// Connect to MongoDB once
+client.connect()
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.use('/user-auth', userRoutes(client));
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('Error connecting to MongoDB:', err);
+    process.exit(1); // Exit process if connection fails
+  });
