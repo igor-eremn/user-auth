@@ -14,7 +14,7 @@ html, body {
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
-  background-image: url("../src/assets/back.jpg");
+  background-image: url("https://res.cloudinary.com/djlzdrvia/image/upload/v1725506786/back_p4fuin.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

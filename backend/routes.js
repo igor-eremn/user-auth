@@ -26,9 +26,11 @@ module.exports = (client) => {
   });
 
   // (3) Delete user
-  router.delete('/delete/:id', async (req, res) => {
+  router.delete('/delete/:email', async (req, res) => {
+    const email = req.params.email;
+
     try {
-      const result = await userModel.deleteUser(req.params.id);
+      const result = await userModel.deleteUser(email);
       if (result.deletedCount === 0) return res.status(404).json({ message: 'User not found' });
       res.json({ message: 'User deleted' });
     } catch (error) {
@@ -51,8 +53,10 @@ module.exports = (client) => {
 
   // (5) Search by email
   router.get('/search-by-email/:email', async (req, res) => {
+    const email = req.params.email;
+
     try {
-      const user = await userModel.findUserByEmail(req.params.email);
+      const user = await userModel.findUserByEmail(email);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }

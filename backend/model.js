@@ -16,21 +16,25 @@ class UserModel {
   async createUser(userData) {
     await this.initializeUserStats();
     const result = await this.userInfoCollection.insertOne(userData);
-    await this.userStatsCollection.updateOne(
-        {},
-        {
-          $inc: {
-            "totalUsers": +1,
-            "activeUsers": +1,
-          },
-        }
-    );
-    return result;
-  }
+    const newUser = await this.userInfoCollection.findOne({ _id: result.insertedId });
 
-  async deleteUser(_id) {
+    await this.userStatsCollection.updateOne(
+      {},
+      {
+        $inc: {
+          "totalUsers": +1,
+          "activeUsers": +1,
+        },
+      }
+    );
+    
+    return newUser;
+  }
+  
+
+  async deleteUser(email) {
     await this.initializeUserStats();
-    const result = await this.userInfoCollection.deleteOne({ _id: new ObjectId(_id) });
+    const result = await this.userInfoCollection.deleteOne({ email: email});
     if (result.deletedCount === 1) {
       await this.userStatsCollection.updateOne(
         {},
@@ -45,7 +49,7 @@ class UserModel {
   }
 
   async findUserByEmail(email) {
-    return await this.userInfoCollection.findOne({ email });
+    return await this.userInfoCollection.findOne({ email: email });
   }
 
   async getAllUsers() {
